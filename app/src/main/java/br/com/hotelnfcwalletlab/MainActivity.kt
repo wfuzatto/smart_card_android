@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.nfc.NfcAdapter
 import android.os.Bundle
+import android.view.LayoutInflater
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -144,12 +146,18 @@ class MainActivity : ComponentActivity() {
                     }
                 }) { Text("Emitir GenericObject real") }
                 if (jwt.isNotBlank() && walletAvailability.startsWith("Disponível")) {
-                    Button(onClick = {
-                        walletSaved = "Aguardando resposta do Google Wallet"
-                        walletClient.savePassesJwt(jwt, this@MainActivity, SAVE_REQUEST)
-                    }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
-                        Text("Adicionar à Carteira do Google")
-                    }
+                    AndroidView(
+                        factory = { context ->
+                            LayoutInflater.from(context).inflate(R.layout.add_to_google_wallet_button, null)
+                        },
+                        update = { view ->
+                            view.setOnClickListener {
+                                walletSaved = "Aguardando resposta do Google Wallet"
+                                walletClient.savePassesJwt(jwt, this@MainActivity, SAVE_REQUEST)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().height(48.dp)
+                    )
                 }
                 Text(feedback, color = blue)
             }

@@ -2,4 +2,5 @@
 <string name="app_name">Hotel NFC Wallet Lab</string>
 <string name="hce_service">Hotel NFC Wallet Lab — diagnóstico ISO-DEP</string>
 <string name="hce_group">AID experimental HOTEL</string>
+<string name="add_to_google_wallet_button_content_description">Adicionar à Carteira do Google</string>
 </resources>
