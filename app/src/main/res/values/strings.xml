@@ -1,0 +1,5 @@
+<resources>
+<string name="app_name">Hotel NFC Wallet Lab</string>
+<string name="hce_service">Hotel NFC Wallet Lab — diagnóstico ISO-DEP</string>
+<string name="hce_group">AID experimental HOTEL</string>
+</resources>

@@ -1,0 +1,52 @@
+name: Backend tests, Android debug APK and Windows diagnostics
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r backend/requirements.txt
+      - run: python -m pytest backend/tests -q
+        env:
+          PYTHONPATH: backend
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Run APDU unit tests and build debug APK
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: hotel-nfc-wallet-lab-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet publish windows/HotelNfcPcscLab/HotelNfcPcscLab.csproj -c Release -r win-x64 --self-contained false -o dist/windows
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hotel-nfc-pcsc-diagnostic-win64
+          path: dist/windows
+          retention-days: 30
